@@ -3,7 +3,7 @@ package org.example;
 import java.util.List;
 
 public class CompareFactory {
-    public ICompare CreateComparerByArguments(List arrArgs) {
+    public ICompare createComparerByArguments(List arrArgs) {
         ICompare comparer = null;
 
         if (arrArgs.contains("-i")) {

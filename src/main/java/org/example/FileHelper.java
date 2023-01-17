@@ -29,20 +29,4 @@ public class FileHelper {
             System.exit(0);
         }
     }
-
-   /* public void removeFile(String filename) {
-        File file=new File(filename);
-
-        if (filename != null) {
-            file.delete();
-        }
-    }
-
-    public void removeFileByMask(String mask) {
-        File file=new File(mask);
-
-        for (String temp: file.list()) {
-           new File(temp).delete();
-        }
-    }*/
 }

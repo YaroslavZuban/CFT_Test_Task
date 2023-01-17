@@ -41,20 +41,22 @@ public class FileMetaData {
 
     public ICompare comparer;
 
-    public void MergeLine(BufferedReader reader, BufferedWriter writer) throws IOException {
-        if (linePrev == null || linePrev.contains(" ") ||linePrev.equals("")) {
-            line = null;
-            System.out.println("Файл " + fileName + " поврежден после элемента " + linePrev + ", дальнейшие данные не учитываются");
-            System.exit(0);
+    public void mergeLine(BufferedReader reader, BufferedWriter writer) throws IOException {
+        if (linePrev == null || linePrev.contains(" ") || linePrev.equals("")) {
+            corruptedFile();
         } else if (comparer.isNotCorrectOrder(linePrev, line)) {
-            line = null;
-            System.out.println("Файл " + fileName + " поврежден после элемента " + linePrev + ", дальнейшие данные не учитываются");
-            System.exit(0);
+            corruptedFile();
         } else {
             writer.write(line);
             writer.newLine();
             linePrev = line;
             line = reader.readLine();
         }
+    }
+
+    private void corruptedFile() {
+        line = null;
+        System.out.println("Файл " + fileName + " поврежден после элемента " + linePrev + ", дальнейшие данные не учитываются");
+        System.exit(0);
     }
 }

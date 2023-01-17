@@ -13,10 +13,7 @@ public class ArgumentHelper {
         var arrArgs = new ArrayList();
 
         for (String e : args) {
-            Pattern pattern = Pattern.compile("[a-zA-z0-9]*");
-            Matcher matcher = pattern.matcher(e);
-
-            if (matcher.find()) {
+            if (arguments.contains(e)) {
                 arrArgs.add(e);
             }
         }

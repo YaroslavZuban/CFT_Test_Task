@@ -10,16 +10,14 @@ public class MergeFileProgram {
 
     private FileHelper fileHelper = new FileHelper();
 
-    private String tempFileMask = "Temp*.txt";
-
-    public void Run(String[] args) {
+    public void run(String[] args) {
         var arrFiles = argumentHelper.ExtractNameFiles(args);
 
         var arrArgs = argumentHelper.ExtractArguments(args);
 
         fileHelper.removeNotExistFiles(arrFiles);
 
-        ICompare comparer = new CompareFactory().CreateComparerByArguments(arrArgs);
+        ICompare comparer = new CompareFactory().createComparerByArguments(arrArgs);
 
         String pathInNext;
         String pathOut = arrFiles.get(0).toString();
@@ -41,8 +39,7 @@ public class MergeFileProgram {
         int k = 0;
         String pathIn;
         String tempFile = null;
-
-
+        int j = 1;
         for (int i = 0; i < arrFiles.size() - 1; i++) {
             if (arrFiles.size() == 2) {
                 pathIn = arrFiles.get(1).toString();
@@ -62,7 +59,7 @@ public class MergeFileProgram {
                         File1.linePrev = File1.line;
 
                         while (File1.line != null) {
-                            File1.MergeLine(reader, writer);
+                            File1.mergeLine(reader, writer);
                         }
 
                         pathIn = tempFile;
@@ -71,13 +68,22 @@ public class MergeFileProgram {
                     throw new RuntimeException(e);
                 }
             } else {
-                pathIn = arrFiles.get(1).toString();
+                if (i == arrFiles.size() - 2) {
+                    return tempFile;
+                }
 
-                pathInNext = arrFiles.get(i + 1).toString();
+                pathIn = arrFiles.get(j).toString();
 
+                if (i == 0) {
+                    pathInNext = arrFiles.get(j + 1).toString();
+                    j++;
+                } else {
+                    pathInNext = "temp" + (k - 1) + ".txt";
+                }
 
                 tempFile = "temp" + k + ".txt";
                 k++;
+                j++;
 
                 try (BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
                     try (BufferedReader reader1 = new BufferedReader(new FileReader(pathIn))) {
@@ -91,6 +97,7 @@ public class MergeFileProgram {
                         File1.comparer = comparer;
                         File2.comparer = comparer;
 
+
                         try (BufferedReader reader2 = new BufferedReader(new FileReader(pathInNext))) {
                             File1.line = reader1.readLine();
                             File2.line = reader2.readLine();
@@ -101,19 +108,19 @@ public class MergeFileProgram {
 
                             while (File1.line != null || File2.line != null) {
                                 if (File1.line == null) {
-                                    File2.MergeLine(reader2, writer);
+                                    File2.mergeLine(reader2, writer);
                                 } else if (File2.line == null) {
-                                    File1.MergeLine(reader1, writer);
-                                } else if (File1.line.equals("") ||File1.line.equals(" ")) {
-                                    System.out.println("Не верный формат файла "+pathIn);
+                                    File1.mergeLine(reader1, writer);
+                                } else if (File1.line.equals("") || File1.line.equals(" ")) {
+                                    System.out.println("Не верный формат файла " + pathIn);
                                     System.exit(0);
-                                } else if (File2.line.equals("") ||File2.line.equals(" ")) {
-                                    System.out.println("Не верный формат файла "+pathInNext);
+                                } else if (File2.line.equals("") || File2.line.equals(" ")) {
+                                    System.out.println("Не верный формат файла " + pathInNext);
                                     System.exit(0);
-                                } else if ( comparer.isNextValid(File1.line, File2.line)) {
-                                    File1.MergeLine(reader1, writer);
+                                } else if (comparer.isNextValid(File1.line, File2.line)) {
+                                    File1.mergeLine(reader1, writer);
                                 } else {
-                                    File2.MergeLine(reader2, writer);
+                                    File2.mergeLine(reader2, writer);
                                 }
                             }
                         }
